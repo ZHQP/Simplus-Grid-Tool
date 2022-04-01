@@ -48,7 +48,7 @@ if AutoSel == 0
     winopen(FileModal);
 end
 if AutoSel == 1 && AutoSelResult == 1
-    SimplusGT.Modal.ModalAnalysis
+    %SimplusGT.Modal.ModalAnalysis
 elseif AutoSelResult == 0
 elseif AutoSel ==1 && AutoSelResult == 0
     error(['Error: Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.'])

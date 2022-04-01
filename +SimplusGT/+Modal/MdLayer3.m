@@ -32,23 +32,33 @@ for ApparatusCount = 1:ApparatusSelNum
         = SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{ApparatusSelL3},ApparatusType{ApparatusSelL3},...
                             PowerFlow{ApparatusSelL3},ParaNew,Ts,ListBus);
      
-        ZmValNew = SimplusGT.Modal.ApparatusImpedanceCal(GmDSS_Cell_New, FreqSel, ApparatusSelL3);
+        ZmValNew = SimplusGT.Modal.ApparatusImpedanceCal(GmDSS_Cell_New, FreqSel, ApparatusSelL3, ApparatusType{ApparatusSelL3});
         
         Layer3Result(ApparatusCount).Apparatus={['Apparatus',num2str(ApparatusSelL3)]};
         Layer3Result(ApparatusCount).Result(k).ParaName = {ParamName{k}};
-        Layer3Result(ApparatusCount).Result(k).DeltaZ.dd = (ZmValNew.dd - ZmValOrig.dd)/(delta_para);
-        Layer3Result(ApparatusCount).Result(k).DeltaZ.dq = (ZmValNew.dq - ZmValOrig.dq)/(delta_para);
-        Layer3Result(ApparatusCount).Result(k).DeltaZ.qd = (ZmValNew.qd - ZmValOrig.qd)/(delta_para);
-        Layer3Result(ApparatusCount).Result(k).DeltaZ.qq = (ZmValNew.qq - ZmValOrig.qq)/(delta_para);
-        
-          Layer3Result(ApparatusCount).Result(k).DLambda_rad = -1*(...
-             Layer3Result(ApparatusCount).Result(k).DeltaZ.dd * Residue_.dd...
-            + Layer3Result(ApparatusCount).Result(k).DeltaZ.dq * Residue_.qd ...
-            + Layer3Result(ApparatusCount).Result(k).DeltaZ.qd * Residue_.dq ...
-            + Layer3Result(ApparatusCount).Result(k).DeltaZ.qq * Residue_.qq);
-        DLambda_Hz=Layer3Result(ApparatusCount).Result(k).DLambda_rad/(2*pi);
-        Layer3Result(ApparatusCount).Result(k).DLambdaRho_Hz=DLambda_Hz;
-        Layer3Result(ApparatusCount).Result(k).DLambdaRho_pu_Hz=DLambda_Hz*ParaSel;
+        if ApparatusType{ApparatusSelL3} <= 89  %AC apparatus
+            Layer3Result(ApparatusCount).Result(k).DeltaZ.dd = (ZmValNew.dd - ZmValOrig.dd)/(delta_para);
+            Layer3Result(ApparatusCount).Result(k).DeltaZ.dq = (ZmValNew.dq - ZmValOrig.dq)/(delta_para);
+            Layer3Result(ApparatusCount).Result(k).DeltaZ.qd = (ZmValNew.qd - ZmValOrig.qd)/(delta_para);
+            Layer3Result(ApparatusCount).Result(k).DeltaZ.qq = (ZmValNew.qq - ZmValOrig.qq)/(delta_para);
+            
+              Layer3Result(ApparatusCount).Result(k).DLambda_rad = -1*(...
+                 Layer3Result(ApparatusCount).Result(k).DeltaZ.dd * Residue_.dd...
+                + Layer3Result(ApparatusCount).Result(k).DeltaZ.dq * Residue_.qd ...
+                + Layer3Result(ApparatusCount).Result(k).DeltaZ.qd * Residue_.dq ...
+                + Layer3Result(ApparatusCount).Result(k).DeltaZ.qq * Residue_.qq);
+            DLambda_Hz=Layer3Result(ApparatusCount).Result(k).DLambda_rad/(2*pi);
+            Layer3Result(ApparatusCount).Result(k).DLambdaRho_Hz=DLambda_Hz;
+            Layer3Result(ApparatusCount).Result(k).DLambdaRho_pu_Hz=DLambda_Hz*ParaSel;
+        elseif ApparatusType{ApparatusSelL3} >= 1010 && ApparatusType{ApparatusSelL3} <= 1089 % DC apparatuses
+            Layer3Result(ApparatusCount).Result(k).DeltaZ.dd = (ZmValNew.dd - ZmValOrig.dd)/(delta_para);
+            Layer3Result(ApparatusCount).Result(k).DeltaZ_val = (ZmValNew.dd - ZmValOrig.dd);
+            Layer3Result(ApparatusCount).Result(k).DLambda_rad = -1*(...
+                Layer3Result(ApparatusCount).Result(k).DeltaZ.dd * Residue_.dd);
+            DLambda_Hz=Layer3Result(ApparatusCount).Result(k).DLambda_rad/(2*pi);
+            Layer3Result(ApparatusCount).Result(k).DLambdaRho_Hz=DLambda_Hz;
+            Layer3Result(ApparatusCount).Result(k).DLambdaRho_pu_Hz=DLambda_Hz*ParaSel;
+        end
     end
 end
 end

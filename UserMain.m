@@ -35,7 +35,7 @@ close all;  % Close all figures, etc
 % this function: 
 % ConvertExcelFile2JsonFile();
 
-UserData = 'UserData.json';
+UserData = 'DC_test_v4_original.json';
 
 %%
 % Other example power systems (in "Examples" folder):

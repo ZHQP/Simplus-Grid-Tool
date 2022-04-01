@@ -37,14 +37,21 @@ SelIndex = 1;
 ApparatusSel12 = 0;
 ApparatusIndex = 1;
 for k = 1:N_Bus
-    if ApparatusType{k} <= 89 %apparatuses)
+    if ApparatusType{k} <= 89 %AC apparatuses)
         if Config(ApparatusIndex,1) == 1 %the apparatus is selected
             ApparatusSel12(SelIndex) = k;
             SelIndex = SelIndex +1;
         else % not selected.
         end
         ApparatusIndex = ApparatusIndex +1;
-    else % floating bus, infinite bus...
+    elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses
+        if Config(ApparatusIndex,1) == 1 %the apparatus is selected
+            ApparatusSel12(SelIndex) = k;
+            SelIndex = SelIndex +1;
+        else % not selected.
+        end
+        ApparatusIndex = ApparatusIndex +1;
+    else% floating bus, infinite bus...
     end        
 end
 % if ApparatusSel12 == 0
@@ -73,7 +80,14 @@ for k = 1:N_Bus
         else % not selected.
         end
         ApparatusIndex = ApparatusIndex +1;
-    else % floating bus, infinite bus...
+    elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses
+        if Config(ApparatusIndex,11) == 1 %the apparatus is selected
+            ApparatusSel3(SelIndex) = k;
+            SelIndex = SelIndex +1;
+        else % not selected.
+        end
+        ApparatusIndex = ApparatusIndex +1;
+    else% floating bus, infinite bus...
     end        
 end
 

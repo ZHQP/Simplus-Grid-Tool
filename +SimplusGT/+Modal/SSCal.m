@@ -30,7 +30,7 @@ for modei=1:ModeSelNum
     pin=1;
     pout=1;
     for k =1: N_Bus
-        if ApparatusType{k} <= 89  %apparatus
+        if ApparatusType{k} <= 89  %AC apparatus
             %Residu calculation
             ResidueAll{modei}(k).dd=C(pout,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin);
             ResidueAll{modei}(k).dq=C(pout,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin+1);
@@ -48,10 +48,20 @@ for modei=1:ModeSelNum
             ZmValAll{modei}(k).dq = Zm(1,2);
             ZmValAll{modei}(k).qd = Zm(2,1);
             ZmValAll{modei}(k).qq = Zm(2,2);
-            pin = pin + length(ApparatusInputStr{k});    %4 inputs and 5 outputs.
+            pin = pin + length(ApparatusInputStr{k});    
             pout = pout + length(ApparatusOutputStr{k});
             
-        else %floating bus and passive load: not considered           
+        elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses
+            ResidueAll{modei}(k).dd=C(pout,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin);
+            GmTf.dd=evalfr(GmDSS_Cell{k}(1,1),2*pi*FreqSel*1i);
+            Gm = [GmTf.dd];
+            Zm = inv(Gm);
+            ZmValAll{modei}(k).dd = Zm(1,1);
+            pin = pin + length(ApparatusInputStr{k});    
+            pout = pout + length(ApparatusOutputStr{k});
+            
+        else
+            %floating bus and passive load: not considered
             ResidueAll{modei}(k).dd=[];
             ZmValAll{modei}(k).dd=[];
             pin = pin + length(ApparatusInputStr{k});

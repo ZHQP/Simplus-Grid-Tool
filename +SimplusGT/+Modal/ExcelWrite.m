@@ -22,9 +22,12 @@ StateSheet(1,2) = {'State'};
 StateSheet(1,3) = {'Select'};
 index = 2;
 StateCount = 0;
+AC_num=1;
+DC_num=1;
 for k = 1:N_Bus
-    if ApparatusType{k} <= 89 %apparatuses)    
-        ApparatusName=strcat('Apparatus',num2str(k));
+    if ApparatusType{k} <= 89 %AC apparatuses)    
+        ApparatusName=strcat('AC_Apparatus',num2str(AC_num));
+        AC_num=AC_num+1;
         StateName = ApparatusStateStr{k};
         StateNum = length(ApparatusStateStr{k});
         StateSheet(index,1) = {ApparatusName};
@@ -41,7 +44,26 @@ for k = 1:N_Bus
                 index = index+1;
             end
         end
-    else % floating bus, infinite bus...
+    elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses
+        ApparatusName=strcat('DC_Apparatus',num2str(DC_num));
+        DC_num=DC_num+1;
+        StateName = ApparatusStateStr{k};
+        StateNum = length(ApparatusStateStr{k});
+        StateSheet(index,1) = {ApparatusName};
+        for j = 1: StateNum
+            StateCount = StateCount +1;
+            if ismember(StateCount,IndexSS)
+                StateSheet(index,2) = {StateName{j}};
+                StateSheet(index,3) = {1};
+%                 if (AutoSel==1 && j == 1) || (AutoSel==1 && j == 2) %select 'epsilon', and 'id' for pf analysis for each apparatus.
+%                     StateSheet(index,3) = {1};
+%                 else
+%                     StateSheet(index,3) = {0};
+%                 end
+                index = index+1;
+            end
+        end
+    else% floating bus, infinite bus...
     end
 end
 
@@ -72,12 +94,12 @@ for i=1:ModeNum
         if abs(imag(Mode(i))) < 100 % below 100Hz mode
             if abs(abs(imag(Mode(i))) - 0) >= 0.1 % not around 0.
                 if abs(abs(imag(Mode(i))) - Fbase) >= 1 % not around Fbase
-                    if abs(real(Mode(i))) < SmodeSel1 || SmodeSel1 == 0
+                    if abs(real(Mode(i))) <= SmodeSel1 || SmodeSel1 == 0
                         SmodeSel2 = SmodeSel1;
                         IndexSel2 = IndexSel1;
                         SmodeSel1 = abs(real(Mode(i)));
                         IndexSel1 = index;
-                    elseif abs(real(Mode(i)))> SmodeSel1 && abs(real(Mode(i)))< SmodeSel2 ...
+                    elseif abs(real(Mode(i)))> SmodeSel1 && abs(real(Mode(i)))<= SmodeSel2 ...
                             || SmodeSel2 == 0 || abs(abs(imag(Mode(i))) - Fbase) <=1
                         SmodeSel2 = abs(real(Mode(i)));
                         IndexSel2 = index;
@@ -124,11 +146,20 @@ ImpedanceSheet(1,1) = {'Apparatus selection for Layer1&2'};
 ImpedanceSheet(2,1) = {'Apparatus'};
 ImpedanceSheet(2,2) = {'Select'};
 index=3;
+AC_num=1;
+DC_num=1;
 for k = 1:N_Bus
-        if ApparatusType{k} <= 89 %apparatuses)
-            ApparatusName=strcat('Apparatus',num2str(k));
+        if ApparatusType{k} <= 89 % AC apparatuses)
+            ApparatusName=strcat('AC_Apparatus',num2str(AC_num));
             ImpedanceSheet(index,1) = {ApparatusName};
             ImpedanceSheet(index,2) = {1};
+            AC_num=AC_num+1;
+            index=index+1;
+        elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses)
+            ApparatusName=strcat('DC_Apparatus',num2str(DC_num));
+            ImpedanceSheet(index,1) = {ApparatusName};
+            ImpedanceSheet(index,2) = {1};
+            DC_num=DC_num+1;
             index=index+1;
         else % floating bus, infinite bus...
         end
@@ -171,12 +202,12 @@ for i=1:ModeNum
         if abs(imag(Mode(i))) < 100 % below 100Hz mode
             if abs(abs(imag(Mode(i))) - 0) >= 0.1 % not around 0.
                 if abs(abs(imag(Mode(i))) - Fbase) >= 1 % not around Fbase
-                    if abs(real(Mode(i))) < SmodeSel1 || SmodeSel1 == 0 || abs(abs(imag(Mode(i))) - Fbase) <=1
+                    if abs(real(Mode(i))) <= SmodeSel1 || SmodeSel1 == 0 || abs(abs(imag(Mode(i))) - Fbase) <=1
                         SmodeSel2 = SmodeSel1;
                         IndexSel2 = IndexSel1;
                         SmodeSel1 = abs(real(Mode(i)));
                         IndexSel1 = index;
-                    elseif abs(real(Mode(i)))> SmodeSel1 && abs(real(Mode(i)))< SmodeSel2 ...
+                    elseif abs(real(Mode(i)))> SmodeSel1 && abs(real(Mode(i)))<= SmodeSel2 ...
                             || SmodeSel2 == 0 || abs(abs(imag(Mode(i))) - Fbase) <=1
                         SmodeSel2 = abs(real(Mode(i)));
                         IndexSel2 = index;
@@ -205,9 +236,23 @@ ImpedanceSheet(2,11)={'Apparatus'};
 ImpedanceSheet(2,12)={'Select'};
 index=3;
 IndexSel=1;
+AC_num=1;
+DC_num=1;
 for k = 1:N_Bus
-        if ApparatusType{k} <= 89 %apparatuses)
-            ApparatusName=strcat('Apparatus',num2str(k));
+        if ApparatusType{k} <= 89 %AC apparatuses)
+            ApparatusName=strcat('AC_Apparatus',num2str(AC_num));
+            AC_num=AC_num+1;
+            ImpedanceSheet(index,11)= {ApparatusName};
+            if AutoSel == 1 && IndexSel==1
+                ImpedanceSheet(index,12) = {1};
+                IndexSel = IndexSel+1;
+            else
+                ImpedanceSheet(index,12) = {0};
+            end
+            index=index+1;
+        elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses)
+            ApparatusName=strcat('DC_Apparatus',num2str(DC_num));
+            DC_num=DC_num+1;
             ImpedanceSheet(index,11)= {ApparatusName};
             if AutoSel == 1 && IndexSel==1
                 ImpedanceSheet(index,12) = {1};
@@ -233,6 +278,9 @@ EnableSheet(9,1) = {'Impedance-PF Layer 1&2'};
 EnableSheet(10,1) = {'Impedance-PF Layer 3'};
 for i=7:10
     EnableSheet(i,2) = {1};
+    if  i ==8
+        EnableSheet(i,2) = {0}; %disable bode plot
+    end
 end
 xlswrite(filename,EnableSheet,'Enabling','A1');
 
