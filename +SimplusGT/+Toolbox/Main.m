@@ -133,8 +133,33 @@ for i = 1:NumApparatus
     
     % The following data may not used in the script, but will be used in
     % simulations. So, do not delete!
-    [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
-        SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},ApparatusPowerFlow{i},Para{i},Ts,ListBusNew);
+
+   [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
+       SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},PowerFlow{i},Para{i},Ts,ListBus);
+    if i==1 && strcmp(UserData,'DC_test_v4_pert.json')
+        GmDSS_excel=GmDSS_Cell{i};
+        Para_excel = Para{i};
+        ApparatusBus_excel=ApparatusBus{i};
+        ApparatusType_excel=ApparatusType{i};
+        ApparatusPowerFlow_excel=PowerFlow{i};
+        Ts_excel=Ts;
+        ListBusNew_excel=ListBus;
+        save  GmDSS_pert_excel.mat  GmDSS_excel Para_excel ApparatusBus_excel ApparatusType_excel ApparatusPowerFlow_excel Ts_excel ListBusNew_excel
+    end
+
+%         [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
+%         SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},ApparatusPowerFlow{i},Para{i},Ts,ListBusNew);
+%     if i==1 && strcmp(UserData,'DC_test_v4_pert.json')
+%         GmDSS_excel=GmDSS_Cell{i};
+%         Para_excel = Para{i};
+%         ApparatusBus_excel=ApparatusBus{i};
+%         ApparatusType_excel=ApparatusType{i};
+%         ApparatusPowerFlow_excel=ApparatusPowerFlow{i};
+%         Ts_excel=Ts;
+%         ListBusNew_excel=ListBusNew;
+%         save  GmDSS_pert_excel.mat  GmDSS_excel Para_excel ApparatusBus_excel ApparatusType_excel ApparatusPowerFlow_excel Ts_excel ListBusNew_excel
+%     end
+
     x_e{i} = ApparatusEqui{i}{1};
     u_e{i} = ApparatusEqui{i}{2};
 end
@@ -259,6 +284,8 @@ else
     fprintf('Warning: The default plot of admittance spectrum is disabled.\n')
 end
 
+
+
 %
 % ==================================================
 % Modal Analysis
@@ -268,12 +295,15 @@ fprintf('\n')
 fprintf('==================================\n')
 fprintf('Modal Analysis\n')
 fprintf('==================================\n')
-if (InputData.Advance.EnableParticipation == 1) && (isempty(DcAreaFlag))
+%if (InputData.Advance.EnableParticipation == 1) && (isempty(DcAreaFlag))
+%InputData.Advance.EnableParticipation=0;
+if InputData.Advance.EnableParticipation == 1
     SimplusGT.Modal.ModalPreRun;
-    SimplusGT.Modal.ModalAnalysis;
+    %SimplusGT.Modal.ModalAnalysis;
+    fprintf('\n');
     fprintf('Generate GreyboxConfg.xlsx for user to config Greybox analysis.\n');    
 else
-    fprintf('Warning: The modal (participation) analysis is disabled or the power system has a dc area.\n');
+    fprintf('Warning: The modal (participation) analysis is disabled.\n');
 end
 
 else

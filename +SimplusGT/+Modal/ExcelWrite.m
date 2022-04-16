@@ -1,9 +1,9 @@
 function [AutoSelResult] = ExcelWrite(N_Bus,N_Apparatus,ApparatusType,ApparatusStateStr,ApparatusInputStr,...
-    ApparatusOutputStr,ZbusStateStr, GminSS, GsysDSS, AutoSel, Fbase, filename)
+    ApparatusOutputStr,ZbusStateStr, GminSS, GsysDSS, AutoSel, Fbase, filename, SysType)
 %this function is to write states, apparatuses, axes to select for
 %further Modal analysis.
 % Author: Yue Zhu
-
+MAX_FREQ = 200;
 AutoSelResult = 0;
 %%
 %*********States sheet write
@@ -15,7 +15,7 @@ Mode=diag(D);
 ModeNum = length(Mode);
 
 xlswrite(filename,{'Select states for state participation analysis. Only 1 mode should be selected.'},'State-PF','A1');
-xlswrite(filename,{'write "1" for for selection, others for not'},'State-PF','A2');
+xlswrite(filename,{'write "1" for selection, others for not'},'State-PF','A2');
 StartSpace='A6';
 StateSheet(1,1) = {'Apparatus'};
 StateSheet(1,2) = {'State'};
@@ -91,7 +91,7 @@ for i=1:ModeNum
     StateSheet(index,6) = {num2str(Mode(i),'%.2f')};
     %auto select two modes
     if AutoSel ==1 && i >= 3
-        if abs(imag(Mode(i))) < 100 % below 100Hz mode
+        if abs(imag(Mode(i))) < MAX_FREQ % below 100Hz mode
             if abs(abs(imag(Mode(i))) - 0) >= 0.1 % not around 0.
                 if abs(abs(imag(Mode(i))) - Fbase) >= 1 % not around Fbase
                     if abs(real(Mode(i))) <= SmodeSel1 || SmodeSel1 == 0
@@ -117,7 +117,8 @@ if IndexSel1~=2 && IndexSel2 ~= 3 % auto select success
     StateSheet(IndexSel2,7) = {1};
 elseif AutoSel==1
     AutoSelResult = 0;
-    error('Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.')
+    %error('Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.')
+    fprintf('Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.')
 else
 end
 
@@ -161,26 +162,42 @@ for k = 1:N_Bus
             ImpedanceSheet(index,2) = {1};
             DC_num=DC_num+1;
             index=index+1;
-        else % floating bus, infinite bus...
+        elseif ApparatusType{k} == 1090 % DC infinite bus...
+            DC_num=DC_num+1;
+        elseif ApparatusType{k} == 90 % AC infinite bus...
+            AC_num=AC_num+1;
         end
 end
 
-%*** bodplot d-q select
+%*** bodplot select (d-q for AC, dc for DC)
 ImpedanceSheet(1,4) ={'Bodeplot axis selection'};
-ImpedanceSheet(2,4) = {'Axis'};
-ImpedanceSheet(2,5) = {'Select'};
-ImpedanceSheet(3,4) = {'d-d'};
-ImpedanceSheet(4,4) = {'d-q'};
-ImpedanceSheet(5,4) = {'q-d'};
-ImpedanceSheet(6,4) = {'q-q'};
-if AutoSel == 1
-    ImpedanceSheet(3,5) = {1};
-else 
-    ImpedanceSheet(3,5) = {0};
+if SysType == 1
+    ImpedanceSheet(1,5) = {'AC system'};
+    ImpedanceSheet(2,4) = {'Axis'};
+    ImpedanceSheet(2,5) = {'Select'};
+    ImpedanceSheet(3,4) = {'d-d'};
+    ImpedanceSheet(4,4) = {'d-q'};
+    ImpedanceSheet(5,4) = {'q-d'};
+    ImpedanceSheet(6,4) = {'q-q'};
+    if AutoSel == 1
+        ImpedanceSheet(3,5) = {1};
+    else 
+        ImpedanceSheet(3,5) = {0};
+    end
+    ImpedanceSheet(4,5) = {0};
+    ImpedanceSheet(5,5) = {0};
+    ImpedanceSheet(6,5) = {0};
+elseif SysType ==2
+    ImpedanceSheet(1,5) = {'DC system'};
+    ImpedanceSheet(2,4) = {'Axis'};
+    ImpedanceSheet(2,5) = {'Select'};
+    ImpedanceSheet(3,4) = {'dc'};
+    if AutoSel == 1
+        ImpedanceSheet(3,5) = {1};
+    else 
+        ImpedanceSheet(3,5) = {0};
+    end
 end
-ImpedanceSheet(4,5) = {0};
-ImpedanceSheet(5,5) = {0};
-ImpedanceSheet(6,5) = {0};
 
 %*** Mode select.
 ImpedanceSheet(1,7) = {'Mode selection for Layer 1&2&3'};
@@ -199,7 +216,7 @@ for i=1:ModeNum
     ImpedanceSheet(index,8)={num2str(Mode(i),'%.2f')};
     
     if AutoSel ==1 && i >= 3
-        if abs(imag(Mode(i))) < 100 % below 100Hz mode
+        if abs(imag(Mode(i))) < MAX_FREQ % below 100Hz mode
             if abs(abs(imag(Mode(i))) - 0) >= 0.1 % not around 0.
                 if abs(abs(imag(Mode(i))) - Fbase) >= 1 % not around Fbase
                     if abs(real(Mode(i))) <= SmodeSel1 || SmodeSel1 == 0 || abs(abs(imag(Mode(i))) - Fbase) <=1
@@ -225,7 +242,8 @@ if AutoSel==1 && IndexSel1~=2 && IndexSel2 ~= 3 % auto select success
     ImpedanceSheet(IndexSel2,9) = {1};
 elseif AutoSel==1
     AutoSelResult = 0;
-    error('Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.')
+    %error('Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.')
+    fprintf('Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.')
 else
 end
 
@@ -261,7 +279,10 @@ for k = 1:N_Bus
                 ImpedanceSheet(index,12) = {0};
             end
             index=index+1;
-        else % floating bus, infinite bus...
+        elseif ApparatusType{k} == 1090 % DC infinite bus...
+            DC_num=DC_num+1;
+        elseif ApparatusType{k} == 90 % AC infinite bus...
+            AC_num=AC_num+1;
         end
 end
 xlswrite(filename,ImpedanceSheet,'Impedance-PF',StartSpace);
@@ -278,9 +299,9 @@ EnableSheet(9,1) = {'Impedance-PF Layer 1&2'};
 EnableSheet(10,1) = {'Impedance-PF Layer 3'};
 for i=7:10
     EnableSheet(i,2) = {1};
-    if  i ==8
-        EnableSheet(i,2) = {0}; %disable bode plot
-    end
+    %if  i ==8
+    %    EnableSheet(i,2) = {0}; %disable bode plot
+    %end
 end
 xlswrite(filename,EnableSheet,'Enabling','A1');
 

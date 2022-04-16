@@ -30,6 +30,8 @@ for modei=1:ModeSelNum
     pin=1;
     pout=1;
     for k =1: N_Bus
+
+        ZmValAll{modei}(k) = SimplusGT.Modal.ApparatusImpedanceCal(GmDSS_Cell{k}, FreqSel , ApparatusType{k});
         if ApparatusType{k} <= 89  %AC apparatus
             %Residu calculation
             ResidueAll{modei}(k).dd=C(pout,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin);
@@ -37,33 +39,36 @@ for modei=1:ModeSelNum
             ResidueAll{modei}(k).qd=C(pout+1,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin);
             ResidueAll{modei}(k).qq=C(pout+1,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin+1);           
             
-            1i;
-            GmTf.dd=evalfr(GmDSS_Cell{k}(1,1),2*pi*FreqSel*1i);
-            GmTf.dq=evalfr(GmDSS_Cell{k}(1,2),2*pi*FreqSel*1i);
-            GmTf.qd=evalfr(GmDSS_Cell{k}(2,1),2*pi*FreqSel*1i);
-            GmTf.qq=evalfr(GmDSS_Cell{k}(2,2),2*pi*FreqSel*1i);
-            Gm = [GmTf.dd, GmTf.dq ; GmTf.qd, GmTf.qq];
-            Zm = inv(Gm);
-            ZmValAll{modei}(k).dd = Zm(1,1);
-            ZmValAll{modei}(k).dq = Zm(1,2);
-            ZmValAll{modei}(k).qd = Zm(2,1);
-            ZmValAll{modei}(k).qq = Zm(2,2);
+%             1i;
+%             GmTf.dd=evalfr(GmDSS_Cell{k}(1,1),2*pi*FreqSel*1i);
+%             GmTf.dq=evalfr(GmDSS_Cell{k}(1,2),2*pi*FreqSel*1i);
+%             GmTf.qd=evalfr(GmDSS_Cell{k}(2,1),2*pi*FreqSel*1i);
+%             GmTf.qq=evalfr(GmDSS_Cell{k}(2,2),2*pi*FreqSel*1i);
+%             Gm = [GmTf.dd, GmTf.dq ; GmTf.qd, GmTf.qq];
+%             Zm = inv(Gm);
+%             ZmValAll{modei}(k).dd = Zm(1,1);
+%             ZmValAll{modei}(k).dq = Zm(1,2);
+%             ZmValAll{modei}(k).qd = Zm(2,1);
+%             ZmValAll{modei}(k).qq = Zm(2,2);
             pin = pin + length(ApparatusInputStr{k});    
             pout = pout + length(ApparatusOutputStr{k});
             
         elseif ApparatusType{k} >= 1010 && ApparatusType{k} <= 1089 % DC apparatuses
             ResidueAll{modei}(k).dd=C(pout,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin);
-            GmTf.dd=evalfr(GmDSS_Cell{k}(1,1),2*pi*FreqSel*1i);
-            Gm = [GmTf.dd];
-            Zm = inv(Gm);
-            ZmValAll{modei}(k).dd = Zm(1,1);
+%             GmTf.dd=evalfr(GmDSS_Cell{k}(1,1),2*pi*FreqSel*1i);
+%            
+%             Gm = [GmTf.dd];
+%             Zm = inv(Gm);
+%             ZmValAll{modei}(k).dd = Zm(1,1);
+%             ZmValAll{modei}(k).lambda = GbMode(ModeSel);
+            
             pin = pin + length(ApparatusInputStr{k});    
             pout = pout + length(ApparatusOutputStr{k});
             
         else
             %floating bus and passive load: not considered
             ResidueAll{modei}(k).dd=[];
-            ZmValAll{modei}(k).dd=[];
+%             ZmValAll{modei}(k).dd=[];
             pin = pin + length(ApparatusInputStr{k});
             pout = pout + length(ApparatusOutputStr{k});
         end

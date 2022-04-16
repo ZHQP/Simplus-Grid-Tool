@@ -29,9 +29,11 @@ clear MdLayer3;
 clear MdStatePF;
 clear MdMode;
 
+
+
 %read Modal config file.
 [AxisSel, ApparatusSelL12, ModeSelAll, ApparatusSelL3All,StateSel_DSS, ModeSel_DSS] = ...
-    SimplusGT.Modal.ExcelRead(FileModal, N_Bus, ApparatusType, GsysSS);
+    SimplusGT.Modal.ExcelRead(FileModal, N_Bus, ApparatusType, GsysSS, SysType);
 [StatePFEnable, BodeEnable, Layer12Enable, Layer3Enable] = ...
     SimplusGT.Modal.EnablingRead(FileModal); %Enablling control.
 
@@ -48,7 +50,7 @@ ModeSelNum = length(ModeSelAll);
 %Analysis.
 if BodeEnable ==1
     fprintf('plotting bode diagram for selected whole-system admittance...\n')
-    SimplusGT.Modal.BodeDraw(ApparatusSelL12, AxisSel, GsysSS, ApparatusType, ApparatusBus, N_Bus, ApparatusInputStr, ApparatusOutputStr);
+    SimplusGT.Modal.BodeDraw(ApparatusSelL12, AxisSel, GsysSS, ApparatusType, ApparatusBus, N_Bus, ApparatusInputStr, ApparatusOutputStr, SysType);
 end
 
 for modei=1:ModeSelNum
@@ -56,7 +58,14 @@ for modei=1:ModeSelNum
     ZmVal = ZmValAll{modei};
     FreqSel = imag(MdMode(ModeSelAll(modei)));
     if Layer12Enable ==1
-        fprintf('Calculating Modal Analysis Layer1&2 and plotting the results...\n')
+        if imag(MdMode(ModeSelAll(modei)))>=0 %display selected mode
+            formatspec='Calculating Modal Analysis Layer1&2 and plotting the results for mode = %f +%fi. \n';
+            fprintf(formatspec,real(MdMode(ModeSelAll(modei))),imag(MdMode(ModeSelAll(modei))))
+        else
+            formatspec='Calculating Modal Analysis Layer1&2 and plotting the results for mode = %f %fi. \n';
+            fprintf(formatspec,real(MdMode(ModeSelAll(modei))),imag(MdMode(ModeSelAll(modei))))
+        end
+        %fprintf('Calculating Modal Analysis Layer1&2 and plotting the results for...')
         [Layer1, Layer2] = SimplusGT.Modal.MdLayer12(Residue,ZmVal,N_Bus,...
             ApparatusType,modei,ApparatusSelL12,FreqSel,MdMode(ModeSelAll(modei)));
         MdLayer1(modei).mode = [num2str(FreqSel),'~Hz'];
@@ -72,10 +81,17 @@ for modei=1:ModeSelNum
         end
     end
     if Layer3Enable ==1
-        fprintf('Calculating Modal Layer3...\n')
+        %fprintf('Calculating Modal Layer3...\n')
+        if imag(MdMode(ModeSelAll(modei)))>=0 %display selected mode
+            formatspec='Calculating Modal Analysis Layer3 for mode = %f +%fi. \n';
+            fprintf(formatspec,real(MdMode(ModeSelAll(modei))),imag(MdMode(ModeSelAll(modei))))
+        else
+            formatspec='Calculating Modal Analysis Layer3 for mode = %f %fi. \n';
+            fprintf(formatspec,real(MdMode(ModeSelAll(modei))),imag(MdMode(ModeSelAll(modei))))
+        end
         MdLayer3(modei).mode = [num2str(FreqSel),'~Hz'];
         MdLayer3(modei).result = SimplusGT.Modal.MdLayer3(Residue,ZmVal,FreqSel,ApparatusType,...
-                ApparatusSelL3All,Para,PowerFlow,Ts,ApparatusBus,ListBus);
+                ApparatusSelL3All,Para,PowerFlow,Ts,ApparatusBus,ListBus, UserData);
     end
 end
 

@@ -14,7 +14,7 @@ for k = 1:N_Bus
         %Modal layer 1
         Layer1All(k) = sqrt( Residue(k).dd*conj(Residue(k).dd)) * sqrt( ZmVal(k).dd*conj(ZmVal(k).dd) );
         %Modal layer 2
-        Layer2All(k) = -1 * ( Residue(k).dd*ZmVal(k).dd );  
+        Layer2All(k) = -1 * ( Residue(k).dd* ZmVal(k).dd );
     end
 end
 

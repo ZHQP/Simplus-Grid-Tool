@@ -14,6 +14,28 @@
 % UserData.xlsx will be re-opened. This might influence the unsaved work of
 % users.
 
+%% determine the type of the analyzed system
+% SysType = 1 ----pure AC system
+% SysType = 2 ----pure DC system
+% SysType = 3 ----hybrid AC/DC system
+%% Check System Type
+SysType = InputData.Bus(1).AcDc;
+for BusNum = 2:length(InputData.Bus)
+    if SysType ~= InputData.Bus(BusNum).AcDc
+        SysType = 3;
+        break;
+    end
+end
+
+if SysType == 1
+    fprintf('The studied system is a pure AC system.\n\n')
+elseif SysType == 2
+    fprintf('The studied system is a pure DC system.\n\n')
+elseif SysType == 3
+    fprintf('The studied system is a hybrid AC/DC system.\n\n')
+end
+%% excel file preparation
+
 % Change suffix
 UserData_Modal = UserData;
 UserData_Modal = strrep(UserData_Modal,'.xlsm','');
@@ -39,7 +61,7 @@ AutoSel = 1;
 ZbusStateStr=ZbusObj.GetString(ZbusObj);
 
 [AutoSelResult] = SimplusGT.Modal.ExcelWrite(N_Bus,NumApparatus,ApparatusType,...
-    ApparatusStateStr,ApparatusInputStr,ApparatusOutputStr,ZbusStateStr, GsysSS, GsysDSS, AutoSel, Fbase, FileModal);
+    ApparatusStateStr,ApparatusInputStr,ApparatusOutputStr,ZbusStateStr, GsysSS, GsysDSS, AutoSel, Fbase, FileModal, SysType);
 
 fprintf('%s is now ready.\nPlease open the file and select the states and apparatuses you are interested.\n',FileModal);
 fprintf('After selection, save the excel file and run Modal Analysis.m.\n');
@@ -48,9 +70,11 @@ if AutoSel == 0
     winopen(FileModal);
 end
 if AutoSel == 1 && AutoSelResult == 1
-    %SimplusGT.Modal.ModalAnalysis
+    SimplusGT.Modal.ModalAnalysis
+    fprintf('Modal Analysis has been done with initial settings. Please edit excel file manually for more information.\n');
 elseif AutoSelResult == 0
 elseif AutoSel ==1 && AutoSelResult == 0
     error(['Error: Mode Auto-Selection failed. Please open ModalConfig.xlsx file to select the mode manually.'])
 else
 end
+

@@ -20,8 +20,8 @@
     "DirectFeedthrough": 0,
     "PowerFlowAlgorithm": 1,
     "EnableCreateSimulinkModel": 0,
-    "EnablePlotPole": 1,
-    "EnablePlotAdmittance": 1,
+    "EnablePlotPole": 0,
+    "EnablePlotAdmittance": 0,
     "EnablePrintOutput": 1,
     "EnableParticipation": 1
   

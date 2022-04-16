@@ -16,14 +16,23 @@ cd(PathStr);                            % Change the current address
 
 %%
 % Convert excel file to json file
-file = 'UserData.xlsm';
-SimplusGT.Toolbox.Excel2Json(file);
+%file = 'UserData.xlsm';
+%SimplusGT.Toolbox.Excel2Json(file);
 
+
+% file = 'DC_test_1_original.xlsx';
+% SimplusGT.Toolbox.Excel2Json(file);
+% 
+% file = 'DC_test_1_pert.xlsx';
+% SimplusGT.Toolbox.Excel2Json(file);
 file = 'DC_test_v4_original.xlsx';
 SimplusGT.Toolbox.Excel2Json(file);
 
-file = 'DC_test_v4.xlsm';
+file = 'DC_test_v4_pert.xlsx';
 SimplusGT.Toolbox.Excel2Json(file);
+
+%file = 'DC_test_v4.xlsm';
+%SimplusGT.Toolbox.Excel2Json(file);
 
 % file = 'Examples\HybridPowerSystem\Hybrid_test_v1.xlsx';
 % SimplusGT.Toolbox.Excel2Json(file);

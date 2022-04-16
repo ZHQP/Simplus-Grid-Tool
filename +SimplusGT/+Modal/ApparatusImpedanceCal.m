@@ -1,4 +1,4 @@
-function ZmVal = ApparatusImpedanceCal(GmDSS_Cell, FreqSel, ApparatusSel, ApparatusType)
+function ZmVal = ApparatusImpedanceCal(GmDSS_Cell, FreqSel, ApparatusType)
     if ApparatusType <= 89  %AC apparatus
         1i;
         GmTf.dd=evalfr(GmDSS_Cell(1,1),2*pi*FreqSel*1i);
@@ -18,5 +18,7 @@ function ZmVal = ApparatusImpedanceCal(GmDSS_Cell, FreqSel, ApparatusSel, Appara
         Gm = [GmTf.dd];
         Zm = inv(Gm);
         ZmVal.dd = Zm(1,1);
+    else
+        ZmVal.dd=[];
     end
 end

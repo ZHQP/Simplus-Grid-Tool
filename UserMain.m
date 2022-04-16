@@ -35,8 +35,11 @@ close all;  % Close all figures, etc
 % this function: 
 % ConvertExcelFile2JsonFile();
 
-UserData = 'DC_test_v4_original.json';
-
+%UserData = 'DC_test_1_original.json';
+%UserData = 'DC_test_1_pert.json';
+%UserData = 'DC_test_v4_original.json';
+UserData = 'DC_test_v4_pert.json';
+%UserData = 'UserData.json';
 %%
 % Other example power systems (in "Examples" folder):
 %
@@ -58,6 +61,14 @@ UserData = 'DC_test_v4_original.json';
 %% Run toolbox
 InputData = SimplusGT.JsonDecoder(UserData);
 SimplusGT.Toolbox.Main();
+
+%save('GmDSS_orig.mat','GmDSS_Cell');
+
+% UserData = 'DC_test_v4_pert.json';
+% InputData = SimplusGT.JsonDecoder(UserData);
+% SimplusGT.Toolbox.Main();
+% 
+% save('GmDSS_pert.mat','GmDSS_Cell');
 
 %% Results available to users (saved in Workspace)
 % GsysDSS;          % Whole-system port model (descriptor state space

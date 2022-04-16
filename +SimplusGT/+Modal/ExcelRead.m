@@ -1,5 +1,5 @@
 function [AxisSel, ApparatusSel12, ModeSel, ApparatusSel3,StateSel_DSS, ModeSel_DSS]...
-    = ExcelRead(filename, N_Bus, ApparatusType, GminSS)
+    = ExcelRead(filename, N_Bus, ApparatusType, GminSS, SysType)
 
 %% State-PF sheet reading
 StateConfig = xlsread(filename,1);
@@ -24,10 +24,18 @@ end
 Config=xlsread(filename,2);
 SelIndex = 1;
 AxisSel=0;
-for ax=1:4
+if SysType == 1
+    for ax=1:4
+        if Config(ax,4)==1
+            AxisSel(SelIndex) = ax;
+            SelIndex = SelIndex +1;
+        end
+    end
+elseif SysType == 2
+    ax=1;
     if Config(ax,4)==1
-        AxisSel(SelIndex) = ax;
-        SelIndex = SelIndex +1;
+      AxisSel(SelIndex) = ax;
+      SelIndex = SelIndex +1;
     end
 end
 % if AxisSel == 0
