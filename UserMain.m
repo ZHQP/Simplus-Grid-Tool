@@ -38,7 +38,9 @@ close all;  % Close all figures, etc
 %UserData = 'DC_test_1_original.json';
 %UserData = 'DC_test_1_pert.json';
 %UserData = 'DC_test_v4_original.json';
-UserData = 'DC_test_v4_pert.json';
+%UserData = 'DC_test_v4_pert.json';
+%UserData = 'AC_test_original.json';
+UserData = 'AC_test_pert.json';
 %UserData = 'UserData.json';
 %%
 % Other example power systems (in "Examples" folder):

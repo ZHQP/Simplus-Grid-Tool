@@ -134,31 +134,31 @@ for i = 1:NumApparatus
     % The following data may not used in the script, but will be used in
     % simulations. So, do not delete!
 
-   [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
-       SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},PowerFlow{i},Para{i},Ts,ListBus);
-    if i==1 && strcmp(UserData,'DC_test_v4_pert.json')
-        GmDSS_excel=GmDSS_Cell{i};
-        Para_excel = Para{i};
-        ApparatusBus_excel=ApparatusBus{i};
-        ApparatusType_excel=ApparatusType{i};
-        ApparatusPowerFlow_excel=PowerFlow{i};
-        Ts_excel=Ts;
-        ListBusNew_excel=ListBus;
-        save  GmDSS_pert_excel.mat  GmDSS_excel Para_excel ApparatusBus_excel ApparatusType_excel ApparatusPowerFlow_excel Ts_excel ListBusNew_excel
-    end
-
-%         [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
-%         SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},ApparatusPowerFlow{i},Para{i},Ts,ListBusNew);
+%    [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
+%        SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},PowerFlow{i},Para{i},Ts,ListBus);
 %     if i==1 && strcmp(UserData,'DC_test_v4_pert.json')
 %         GmDSS_excel=GmDSS_Cell{i};
 %         Para_excel = Para{i};
 %         ApparatusBus_excel=ApparatusBus{i};
 %         ApparatusType_excel=ApparatusType{i};
-%         ApparatusPowerFlow_excel=ApparatusPowerFlow{i};
+%         ApparatusPowerFlow_excel=PowerFlow{i};
 %         Ts_excel=Ts;
-%         ListBusNew_excel=ListBusNew;
+%         ListBusNew_excel=ListBus;
 %         save  GmDSS_pert_excel.mat  GmDSS_excel Para_excel ApparatusBus_excel ApparatusType_excel ApparatusPowerFlow_excel Ts_excel ListBusNew_excel
 %     end
+
+        [GmObj_Cell{i},GmDSS_Cell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
+        SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},ApparatusPowerFlow{i},Para{i},Ts,ListBusNew);
+    if i==1 && strcmp(UserData,'DC_test_v4_pert.json')
+        GmDSS_excel=GmDSS_Cell{i};
+        Para_excel = Para{i};
+        ApparatusBus_excel=ApparatusBus{i};
+        ApparatusType_excel=ApparatusType{i};
+        ApparatusPowerFlow_excel=ApparatusPowerFlow{i};
+        Ts_excel=Ts;
+        ListBusNew_excel=ListBusNew;
+        save  GmDSS_pert_excel.mat  GmDSS_excel Para_excel ApparatusBus_excel ApparatusType_excel ApparatusPowerFlow_excel Ts_excel ListBusNew_excel
+    end
 
     x_e{i} = ApparatusEqui{i}{1};
     u_e{i} = ApparatusEqui{i}{2};

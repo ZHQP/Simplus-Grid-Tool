@@ -91,7 +91,7 @@ for modei=1:ModeSelNum
         end
         MdLayer3(modei).mode = [num2str(FreqSel),'~Hz'];
         MdLayer3(modei).result = SimplusGT.Modal.MdLayer3(Residue,ZmVal,FreqSel,ApparatusType,...
-                ApparatusSelL3All,Para,PowerFlow,Ts,ApparatusBus,ListBus, UserData);
+                ApparatusSelL3All,Para,PowerFlowNew,Ts,ApparatusBus,ListBusNew, UserData);
     end
 end
 

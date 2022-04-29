@@ -24,11 +24,17 @@ cd(PathStr);                            % Change the current address
 % SimplusGT.Toolbox.Excel2Json(file);
 % 
 % file = 'DC_test_1_pert.xlsx';
+% % SimplusGT.Toolbox.Excel2Json(file);
+% file = 'DC_test_v4_original.xlsx';
 % SimplusGT.Toolbox.Excel2Json(file);
-file = 'DC_test_v4_original.xlsx';
+% 
+% file = 'DC_test_v4_pert.xlsx';
+% SimplusGT.Toolbox.Excel2Json(file);
+
+file = 'AC_test_original.xlsx';
 SimplusGT.Toolbox.Excel2Json(file);
 
-file = 'DC_test_v4_pert.xlsx';
+file = 'AC_test_pert.xlsx';
 SimplusGT.Toolbox.Excel2Json(file);
 
 %file = 'DC_test_v4.xlsm';

@@ -12,6 +12,7 @@ function Layer3Result = MdLayer3(Residue,ZmVal,FreqSel,ApparatusType,...
 
 ApparatusSelNum=length(ApparatusSelL3All);
 
+
 for ApparatusCount = 1:ApparatusSelNum
     ApparatusSelL3 = ApparatusSelL3All(ApparatusCount);
     ZmValOrig = ZmVal(ApparatusSelL3);
@@ -29,16 +30,23 @@ for ApparatusCount = 1:ApparatusSelNum
 %         [~,GmDSS_Cell_New,~,~,~,~,~,~] = ...
 %             SimplusGT.Toolbox.ApparatusModelCreate_old('Type', ApparatusType{ApparatusSelL3} ,...
 %             'Flow',PowerFlow{ApparatusSelL3},'Para',ParaNew,'Ts',Ts);        
-
+        if length(ApparatusBus{ApparatusSelL3}) == 1
+     	    ApparatusPowerFlow{ApparatusSelL3} = PowerFlow{ApparatusBus{ApparatusSelL3}};
+        elseif length(ApparatusBus{ApparatusSelL3}) == 2
+            ApparatusPowerFlow{ApparatusSelL3} = [PowerFlow{ApparatusBus{ApparatusSelL3}(1)},PowerFlow{ApparatusBus{ApparatusSelL3}(2)}];
+        else
+            error(['Error']);
+        end
         [~,GmDSS_Cell_New,~,~,~,~,~,~,~] ...
         = SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{ApparatusSelL3},ApparatusType{ApparatusSelL3},...
-                            PowerFlow{ApparatusSelL3},ParaNew,Ts,ListBus);
+                            ApparatusPowerFlow{ApparatusSelL3},ParaNew,Ts,ListBus);
+%    PowerFlowNew ListBusNew
 if ApparatusCount == 1 && FreqSel>0 && strcmp(UserData,'DC_test_v4_original.json') && k==5
     Para_code = ParaNew(1);
     GmDSS_code = GmDSS_Cell_New;
     ApparatusBus_code=ApparatusBus{ApparatusSelL3};
     ApparatusType_code=ApparatusType{ApparatusSelL3};
-    ApparatusPowerFlow_code=PowerFlow{ApparatusSelL3};
+    ApparatusPowerFlow_code=ApparatusPowerFlow{ApparatusSelL3};
     Ts_code=Ts;
     ListBus_code=ListBus;
     save GmDSS_pert_code.mat GmDSS_code Para_code ApparatusBus_code ApparatusType_code ApparatusPowerFlow_code Ts_code ListBus_code
@@ -53,7 +61,7 @@ end
             Layer3Result(ApparatusCount).Result(k).DeltaZ.qd = (ZmValNew.qd - ZmValOrig.qd)/(delta_para);
             Layer3Result(ApparatusCount).Result(k).DeltaZ.qq = (ZmValNew.qq - ZmValOrig.qq)/(delta_para);
             
-              Layer3Result(ApparatusCount).Result(k).DLambda_rad = -1*(...
+            Layer3Result(ApparatusCount).Result(k).DLambda_rad = -1*(...
                  Layer3Result(ApparatusCount).Result(k).DeltaZ.dd * Residue_.dd...
                 + Layer3Result(ApparatusCount).Result(k).DeltaZ.dq * Residue_.qd ...
                 + Layer3Result(ApparatusCount).Result(k).DeltaZ.qd * Residue_.dq ...
